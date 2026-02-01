@@ -117,18 +117,6 @@
                 <&inc_dec_kp UP_ARROW DOWN_ARROW>;
         };
 
-        control_layers {
-            bindings = <
-&trans  &bt BT_SEL 0    &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4  &trans      &trans  &trans  &trans  &trans  &kp W
-&trans  &trans          &trans        &trans        &trans        &trans        &trans      &trans  &trans  &trans  &trans  &trans
-&trans  &bt BT_CLR_ALL  &trans        &trans        &trans        &trans        &trans      &trans  &trans  &trans  &trans  &trans
-&trans  &trans          &trans        &bt BT_CLR    &trans        &trans        &bt BT_NXT  &trans  &trans  &trans  &trans  &trans
-&trans  &trans          &trans        &trans        &trans        &trans        &trans      &trans  &trans  &trans  &trans  &trans
-            >;
-
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
-        };
-
         scroll-layers {
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
@@ -151,10 +139,8 @@
             >;
 
             sensor-bindings =
-                <&scroll_vertical_encoder>,
-                // 编码器1：上下滚动,
-                <&scroll_horizontal_encoder>;
-  // 编码器2：左右滚动
+                <&scroll_vertical_encoder>,    // 编码器1：上下滚动,
+                <&scroll_horizontal_encoder>;  // 编码器2：左右滚动
         };
     };
 };
