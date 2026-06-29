@@ -39,7 +39,10 @@
 
     
         /* encoders */
-        /* steps 要设置为 triggers-per-rotation 的2或4倍：https://github.com/zmkfirmware/zmk/issues/2666 */
+        /* 这颗滚轮：转一圈 24 个 detent，每个 detent 2 个 quadrature transition。
+         * 改版 ec11 驱动在 ISR 内解码并按 pulses-per-detent 累计（抖动的 +1/-1 自动抵消），
+         * pulses 计的是“格数”，所以 steps = 每圈 detent 数 = 24，
+         * 与下面 triggers-per-rotation=24 配对 => 1 detent = 1 次滚动。 */
 
         left_encoder: encoder_left {
             compatible = "alps,ec11";
@@ -49,7 +52,6 @@
             b-gpios = <&gpio0 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
             steps = <24>;
             pulses-per-detent = <2>;
-            debounce-us = <200>;
         };
 
         right_encoder: encoder_right {
@@ -60,7 +62,6 @@
             b-gpios = <&gpio0 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
             steps = <24>;
             pulses-per-detent = <2>;
-            debounce-us = <200>;
         };
 
         /* 转动一圈是24个点（detent） */
