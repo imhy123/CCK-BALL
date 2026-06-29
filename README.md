@@ -10,7 +10,7 @@ zmk-config for CCK_BALL (4x6)
 
 #### 1、将zmk代码库指向修改后的代码库
 
-只需要修改2行：将zmk指向修改过的zmk代码库（第4行）；另外zmk官方库是打了个tag，而fork代码库是个分支，因此第10行也要改成 `v0.3-branch`。
+`west.yml`中需要修改2行：将zmk指向修改过的zmk代码库（第4行）；另外zmk官方库是打了个tag，而fork代码库是个分支，因此第10行也要改成 `v0.3-branch`。
 
 参考配置：
 ```yaml
