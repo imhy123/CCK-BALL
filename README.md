@@ -33,9 +33,9 @@ manifest:
     path: config
 ```
 
-#### 2、在`cck_ball.dtsi`中将encoder的`steps`改为24
+#### 2、修改`cck_ball.dtsi`
 
-也是修改两处，即左右encoder的steps改为24即可。
+一共修改3处，即左、右`encoder`的`steps`都改为24，以及sensors中的`triggers-per-rotation `改为`24`。
 ```
     /* encoders */
 	left_encoder: encoder_left {
@@ -55,6 +55,14 @@ manifest:
 		b-gpios = <&gpio0 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
 		steps = <24>;
 	};
+
+    /* 转动一圈是24个点（detent） */
+
+    sensors {
+        compatible = "zmk,keymap-sensors";
+        sensors = <&left_encoder &right_encoder>;
+        triggers-per-rotation = <24>;
+    };
 ```
 
 
@@ -65,7 +73,7 @@ manifest:
 这款编码器转动一周是24个“咔哒”，每个咔哒（detent）发出2次信号。而且编码器在转动时信号会高频抖动"前进一步立刻退一步"(3→2→3→2…)。
 所以想要编码器真正能用：
 1. 需要在zmk的EC11驱动里面加 pulses-per-detent=2，表示收到2次连续信号时（±2）才发一格 delta；
-2. 需要重新zmk的EC11驱动，处理高频的信号、并进行抖动过滤，这个编码器的抖动的时候信号间隔只有7–150 µs；
+2. 需要重新修改zmk的EC11驱动，在ISR处理高频信号、并进行抖动过滤，因为这个编码器抖动的时候信号间隔只有7–150 µs，而EC11官方驱动会开关中断来读状态、并不适合这颗编码器；
 
 
 在ESP32上连接这款编码器做了一个抓包记录如下：
