@@ -1,8 +1,66 @@
 zmk-config for CCK_BALL (4x6)
 
-## 其它
+## 关于CCK_BALL的滚轮编码器
 
-### EC11编码器抓包
+### 使用修改过的zmk EC11驱动
+
+该款键盘与zmk官方的EC11驱动并不完全适配，在借助其它单片机抓包其信号特征后，借助AI实现了对zmk官方EC11驱动的修改，能够优化该款键盘左右滚轮的使用体验。
+
+使用方法如下。
+
+#### 1、将zmk代码库指向修改后的代码库
+
+只需要修改2行：将zmk指向修改过的zmk代码库（第4行）；另外zmk官方库是打了个tag，而fork代码库是个分支，因此第10行也要改成 `v0.3-branch`。
+
+参考配置：
+```yaml
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/imhy123
+    - name: DoctorWangWang
+      url-base: https://github.com/DoctorWangWang
+  projects:
+    - name: zmk
+      remote: zmkfirmware
+      revision: v0.3-branch
+      import: app/west.yml
+    - name: zmk-pmw3610-driver
+      remote: DoctorWangWang
+      revision: main
+      
+  self:
+    path: config
+```
+
+#### 2、在`cck_ball.dtsi`中将encoder的`steps`改为24
+
+也是修改两处，即左右encoder的steps改为24即可。
+```
+    /* encoders */
+	left_encoder: encoder_left {
+		compatible = "alps,ec11";
+        status = "disabled";
+		label = "LEFT_ENCODER";
+		a-gpios = <&gpio0 29 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+		b-gpios = <&gpio0 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+		steps = <24>;
+	};
+
+	right_encoder: encoder_right {
+		compatible = "alps,ec11";
+        status = "disabled";
+		label = "RIGHT_ENCODER";
+		a-gpios = <&gpio0 29 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+		b-gpios = <&gpio0 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+		steps = <24>;
+	};
+```
+
+
+> PS: 因为这个编码器每转动一格是发2个信号，所以在驱动里面加了`pulses-per-detent`的配置项，默认值即为2，因此这里不用显式定义（其它编码器如需修改则在`cck_ball.dtsi`的`left_encoder`、`right_encoder`中定义）。
+
+### 附：EC11编码器的抓包
 
 这款编码器转动一周是24个“咔哒”，每个咔哒（detent）发出2次信号。而且编码器在转动时信号会高频抖动"前进一步立刻退一步"(3→2→3→2…)。
 所以想要编码器真正能用：
