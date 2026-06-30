@@ -39,10 +39,8 @@
 
     
         /* encoders */
-        /* 这颗滚轮：转一圈 24 个 detent，每个 detent 2 个 quadrature transition。
-         * 改版 ec11 驱动在 ISR 内解码并按 pulses-per-detent 累计（抖动的 +1/-1 自动抵消），
-         * pulses 计的是“格数”，所以 steps = 每圈 detent 数 = 24，
-         * 与下面 triggers-per-rotation=24 配对 => 1 detent = 1 次滚动。 */
+        /* 方向毛刺过滤已在驱动里默认开启（reverse-guard-us=800、reverse-glitch-as-codir=1），此处无需配置；
+         * 要调整时再显式写这两个属性覆盖默认值即可。 */
 
         left_encoder: encoder_left {
             compatible = "alps,ec11";
