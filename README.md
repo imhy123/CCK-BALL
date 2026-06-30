@@ -66,7 +66,8 @@ manifest:
 ```
 
 
-> PS: 因为这个编码器每转动一格是发2个信号，所以在驱动里面加了`pulses-per-detent`的配置项，默认值即为2，因此这里不用显式定义（其它编码器如需修改则在`cck_ball.dtsi`的`left_encoder`、`right_encoder`中定义）。
+> PS1: 因为这个编码器每转动一格是发2个信号，所以在驱动里面加了`pulses-per-detent`的配置项，默认值即为2，因此这里不用显式定义（其它编码器如需修改则在`cck_ball.dtsi`的`left_encoder`、`right_encoder`中定义）。
+> PS2: 这个编码器信号抖得太厉害，目前加了 filter-reverse-guard-us（过滤反向的信号突刺时间阈值，默认800us）、filter-reverse-as-codir（将反向信号突刺视为正向，默认0-不开启）、filter-codir-guard-us（过滤连续的正向信号，默认3000us）、filter-jump-compensate（对连续跳跃的信号进行补偿，默认1-开启） 进行软件滤波，勉强能用了，但肯定算不上好用。
 
 ### 附：EC11编码器的抓包
 
