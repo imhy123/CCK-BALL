@@ -39,8 +39,11 @@
 
     
         /* encoders */
-        /* 方向毛刺过滤已在驱动里默认开启（reverse-guard-us=800、reverse-glitch-as-codir=1），此处无需配置；
-         * 要调整时再显式写这两个属性覆盖默认值即可。 */
+        /* 信号过滤都在驱动里给了默认值，此处无需配置（要覆盖再显式写对应属性）：
+         *   filter-reverse-guard-us=800  反向信号判为毛刺的时间窗
+         *   filter-reverse-as-codir=0    毛刺是否当正向补发（本轮先关）
+         *   filter-codir-guard-us=3000   正向(codir)补发的最小间隔
+         *   filter-jump-compensate=1     2 步跳变按当前方向补偿丢失的一格 */
 
         left_encoder: encoder_left {
             compatible = "alps,ec11";
