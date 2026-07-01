@@ -76,6 +76,11 @@
             bindings = <&kp EQUAL>;
             key-positions = <21 22>;
         };
+
+        space {
+            bindings = <&kp SPACE>;
+            key-positions = <25 26>;
+        };
     };
 
     keymap {
@@ -146,7 +151,7 @@
 
             sensor-bindings =
                 <&scroll_vertical_encoder>,
-                // 编码器1：上下滚动,,,
+                // 编码器1：上下滚动,,,,
                 <&scroll_horizontal_encoder>;
 
             // 编码器2：左右滚动
