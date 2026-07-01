@@ -42,7 +42,7 @@
         /* 信号过滤都在驱动里给了默认值，此处无需配置（要覆盖再显式写对应属性）：
          *   filter-reverse-guard-us=800  反向信号判为毛刺的时间窗
          *   filter-reverse-as-codir=0    毛刺是否当正向补发（本轮先关）
-         *   filter-codir-guard-us=3000   正向(codir)补发的最小间隔
+         *   filter-codir-guard-us=3000   推断式补发(codir + 2 步跳变)的最小间隔，防一格连发
          *   filter-jump-compensate=1     2 步跳变按当前方向补偿丢失的一格 */
 
         left_encoder: encoder_left {
@@ -51,8 +51,12 @@
             label = "LEFT_ENCODER";
             a-gpios = <&gpio0 29 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
             b-gpios = <&gpio0 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-            steps = <24>;
-            pulses-per-detent = <2>;
+            steps = <24>;   /* 数一下转动一周有多少格 */
+            pulses-per-detent = <2>;  /* 每转动一格编码器发几个信号 - 这个就来源于qmk，原版zmk只能是1，现在用的编码器是2，有些编码器是4 */
+            /* filter-reverse-guard-us = <800>;  过滤转动过程中出现的反向信号毛刺时间窗口，默认值就是800，关闭需要显式设置为0 */
+            /* filter-reverse-as-codir = <0>;  转动过程中出现的反向信号毛刺处理为正向信号，现在默认值是0 - 关闭 */
+            /* filter-codir-guard-us = <3000>;  转动过程中抑制快速连续出现的正向信号的时间窗口，默认值是3000，关闭需要显式设置为0 */
+            /* filter-jump-compensate = <1>;  连续出现的中间信号处理为转动信号 — 这个就是为了处理之前转动2格才动1次的问题，默认值是1，关闭需要显式设置为0 */
         };
 
         right_encoder: encoder_right {
@@ -62,7 +66,11 @@
             a-gpios = <&gpio0 29 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
             b-gpios = <&gpio0 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
             steps = <24>;
-            pulses-per-detent = <2>;
+            pulses-per-detent = <2>;  /* 每转动一格编码器发几个信号 - 这个就来源于qmk，原版zmk只能是1，现在用的编码器是2，有些编码器是4 */
+            /* filter-reverse-guard-us = <800>;  过滤转动过程中出现的反向信号毛刺时间窗口，默认值就是800，关闭需要显式设置为0 */
+            /* filter-reverse-as-codir = <0>;  转动过程中出现的反向信号毛刺处理为正向信号，现在默认值是0 - 关闭 */
+            /* filter-codir-guard-us = <3000>;  转动过程中抑制快速连续出现的正向信号的时间窗口，默认值是3000，关闭需要显式设置为0 */
+            /* filter-jump-compensate = <1>;  连续出现的中间信号处理为转动信号 — 这个就是为了处理之前转动2格才动1次的问题，默认值是1，关闭需要显式设置为0 */
         };
 
         /* 转动一圈是24个点（detent） */
@@ -70,7 +78,7 @@
         sensors {
             compatible = "zmk,keymap-sensors";
             sensors = <&left_encoder &right_encoder>;
-            triggers-per-rotation = <24>;
+            triggers-per-rotation = <24>;   /* 这个跟上面2个steps保持一致 */
         };
 
     };
