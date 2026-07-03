@@ -1,0 +1,16 @@
+.DS_Store
+
+# Virtual environments
+.venv
+
+### VS Code ###
+.vscode/
+!.vscode/settings.json
+
+# Vibe Coding
+.claude/settings.local.json
+.qoder/
+
+# Others
+dev-container/firmware/
+reference/
