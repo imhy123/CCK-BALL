@@ -135,11 +135,11 @@
 
         scroll-layers {
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &tb_cpi 400  &tb_cpi 600  &tb_cpi 800  &tb_cpi 1000 &tb_cpi 1200      &tb_cpi 1400      &tb_cpi 1600       &trans  &trans  &trans  &trans
+&trans  &trans       &trans       &trans       &trans       &tb_scl_cpi 1200  &tb_scl_cpi 1400  &tb_scl_cpi 1600   &trans  &trans  &trans  &trans
+&trans  &trans       &trans       &trans       &trans       &trans            &trans            &trans             &trans  &trans  &trans  &trans
+&trans  &trans       &trans       &trans       &trans       &trans            &trans            &trans             &trans  &trans  &trans  &trans
+&trans  &trans       &trans       &trans       &trans       &trans            &trans            &trans             &trans  &trans  &trans  &trans
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;

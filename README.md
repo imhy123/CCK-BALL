@@ -1,6 +1,72 @@
 zmk-config for CCK_BALL (4x6)
 
-## 关于CCK_BALL的滚轮编码器
+## CCK_BALL的轨迹球驱动优化
+
+对轨迹球的驱动（原版为[DoctorWangWang/zmk-pmw3610-driver](https://github.com/DoctorWangWang/zmk-pmw3610-driver)）进行了一轮升级，支持设置轨迹球指针模式及滚动模式的CPI。
+> 使用该驱动，默认的 CONFIG_PMW3610_CPI 还是生效的，狙击模式也还是有的。
+> 指针模式及滚动模式的CPI的设置目前没有持久化，在重启或关机后会恢复到 CONFIG_PMW3610_CPI。
+
+### 使用修改过的 zmk-pmw3610-driver 驱动
+
+#### 1、将代码库指向修改后的仓库
+
+`west.yml`中需要修改2处：一是新增一个remote即`zmkfirmware-fork`，二是将`zmk-pmw3610-driver`的remote指向`zmkfirmware-fork`。
+
+```yaml
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+    - name: zmkfirmware-fork
+      url-base: https://github.com/imhy123
+  projects:
+    - name: zmk
+      remote: zmkfirmware-fork
+      revision: v0.3-branch
+      import: app/west.yml
+    - name: zmk-pmw3610-driver
+      remote: zmkfirmware-fork
+      revision: main
+      
+  self:
+    path: config
+```
+
+#### 2、修改 cck_ball.dtsi
+
+修改 `config/boards/shields/cck_ball/cck_ball.dtsi`, 添加一个`behaviors`，里面声明了2个操作：
+* `tb_cpi` ： 修改轨迹球指针模式/移动模式的CPI
+* `tb_scl_cpi`： 修改轨迹球滚动模式的CPI
+
+```
+behaviors {
+    /* 运行时切换轨迹球「普通移动档」CPI：keymap 里绑 &tb_cpi <值>（200 的倍数，200..3200）。
+      * 放在共用 dtsi 是因为 keymap 左右手共用，&tb_cpi 这个 label 两手都要能解析；
+      * behavior 本身在没有 trackball 的左手会编成 no-op（见驱动 behavior_pmw3610_cpi.c）。 */
+    tb_cpi: tb_cpi {
+        compatible = "pixart,pmw3610-cpi";
+        #binding-cells = <1>;
+    };
+
+    /* 运行时切换轨迹球「滚动模式」CPI：keymap 里绑 &tb_scl_cpi <值>。同样放共用 dtsi、左手 no-op。 */
+    tb_scl_cpi: tb_scl_cpi {
+        compatible = "pixart,pmw3610-scroll-cpi";
+        #binding-cells = <1>;
+    };
+};
+```
+
+#### 3、修改keymap，调用`tb_cpi`和`tb_scl_cpi`
+
+手动修改 `config/cck_ball.keymap`，为按键添加 `tb_cpi` 或者 `tb_scl_cpi` 操作即可。
+> 这个自定义的behaviors，网页布局编辑器、ZMK Studio能不能正常回写还没有测试过，最好是手动修改。
+
+如：
+```
+&trans  &tb_cpi 200 &tb_scl_cpi 1400
+```
+
+## CCK_BALL的滚轮编码器优化
 
 ### 使用修改过的zmk EC11驱动
 
@@ -10,23 +76,23 @@ zmk-config for CCK_BALL (4x6)
 
 #### 1、将zmk代码库指向修改后的代码库
 
-`west.yml`中需要修改2行：将zmk指向修改过的zmk代码库（第4行）；另外zmk官方库是打了个tag，而fork代码库是个分支，因此第10行也要改成 `v0.3-branch`。
+`west.yml`中需要修改2处：一是新增一个remote即`zmkfirmware-fork`，二是zmkfirmware-fork下的zmk仓库的revision要改成 `v0.3-branch`。
 
 参考配置：
 ```yaml
 manifest:
   remotes:
     - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+    - name: zmkfirmware-fork
       url-base: https://github.com/imhy123
-    - name: DoctorWangWang
-      url-base: https://github.com/DoctorWangWang
   projects:
     - name: zmk
-      remote: zmkfirmware
+      remote: zmkfirmware-fork
       revision: v0.3-branch
       import: app/west.yml
     - name: zmk-pmw3610-driver
-      remote: DoctorWangWang
+      remote: zmkfirmware-fork
       revision: main
       
   self:

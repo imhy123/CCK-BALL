@@ -8,6 +8,22 @@
         zmk,physical-layouts = &cck_ball_layouts;
     };
 
+    behaviors {
+        /* 运行时切换轨迹球「普通移动档」CPI：keymap 里绑 &tb_cpi <值>（200 的倍数，200..3200）。
+         * 放在共用 dtsi 是因为 keymap 左右手共用，&tb_cpi 这个 label 两手都要能解析；
+         * behavior 本身在没有 trackball 的左手会编成 no-op（见驱动 behavior_pmw3610_cpi.c）。 */
+        tb_cpi: tb_cpi {
+            compatible = "pixart,pmw3610-cpi";
+            #binding-cells = <1>;
+        };
+
+        /* 运行时切换轨迹球「滚动模式」CPI：keymap 里绑 &tb_scl_cpi <值>。同样放共用 dtsi、左手 no-op。 */
+        tb_scl_cpi: tb_scl_cpi {
+            compatible = "pixart,pmw3610-scroll-cpi";
+            #binding-cells = <1>;
+        };
+    };
+
     default_transform: keymap_transform_0 {
         compatible = "zmk,matrix-transform";
         columns = <12>;
